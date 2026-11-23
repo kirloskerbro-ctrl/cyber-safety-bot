@@ -20,11 +20,12 @@ with col_logo:
 
 with col_title:
     st.markdown("## Cyber Crime Cell, Commissionerate Varanasi")
-    st.caption("आत्रेय | Cyber Safety Awareness Bot")
+    st.caption("आत्रेय Cyber Saathi | A guide to online safety and reporting cybercrime.")
 
 st.divider()
 
-# Official Social Media Reporting Links
+# Official Links
+MRM_LINK = "https://mrm-ncrp.mha.gov.in/raise-request"
 SOCIAL_MEDIA_LINKS = {
     "Facebook": "https://www.facebook.com/help/contact/295309487309948/",
     "WhatsApp": "https://www.whatsapp.com/contact/forms/1534459096974129",
@@ -39,6 +40,25 @@ CONTENT = {
         "welcome": "नमस्ते! 🙏 मैं **साइबर क्राइम सेल, कमिश्नरेट वाराणसी** का जागरूकता सहायक हूँ।\n\nनीचे दिए गए विकल्पों में से अपनी समस्या चुनें, या अपना सवाल लिखें।",
         "menu_btn": "📋 मुख्य मेन्यू खोलें",
         "lang_btn": "🌐 Change Language (English)",
+        "quick_services_title": "### ⚡ प्रमुख नागरिक सेवाएं (Quick Services)",
+        "grm_btn": "🏦 अन्य राज्य पुलिस द्वारा खाता फ्रीज़ (GRM सूचना)",
+        "mrm_btn": "💸 मनी रिस्टोरेशन मॉड्यूल (MRM) — रिफंड अपडेट / अनुरोध",
+        "mrm_caption": "अपना 14 अंकों का NCRP Acknowledgement No. डालकर फ्रीज़ राशि की वापसी (Refund) हेतु आवेदन/अपडेट देखें।",
+        "grm_notice": """
+### 🏦 GRM (Grievance Redressal Mechanism) संबंधी महत्वपूर्ण सूचना
+
+यदि आपका बैंक खाता किसी **अन्य राज्य/जनपद की पुलिस अथवा साइबर थाना** द्वारा फ्रीज़ (**Freeze/LIEN**) किया गया है, तो **साइबर क्राइम सेल, वाराणसी द्वारा NOC जारी नहीं की जाती।**
+
+**ऐसी स्थिति में क्या करें?**
+* ✔️ अपने बैंक की संबंधित शाखा (**Home Branch**) में जाकर **GRM (Grievance Redressal Mechanism)** के माध्यम से अपना आवेदन दर्ज कराएं।
+* ✔️ बैंक द्वारा दर्ज किया गया GRM **स्वतः (Automatically)** उस संबंधित पुलिस इकाई अथवा राज्य के पास भेज दिया जाता है, जहाँ से आपके खाते पर फ्रीज़/लियन लगाया गया है।
+* ✔️ संबंधित जांच अधिकारी/साइबर थाना आपके आवेदन का परीक्षण कर नियमानुसार आवश्यक कार्रवाई करेगा।
+
+**कृपया ध्यान दें:**
+* साइबर क्राइम सेल, वाराणसी किसी अन्य राज्य द्वारा फ्रीज़ किए गए खाते के संबंध में NOC जारी करने के लिए अधिकृत नहीं है।
+
+*जनहित में जारी — साइबर क्राइम सेल, वाराणसी कमिश्नरेट, उत्तर प्रदेश पुलिस*
+""",
         "main_prompt": "👇 **यह किस प्रकार की शिकायत है? कृपया नीचे से एक विकल्प चुनें:**",
         "sub_prompt": "👇 **कृपया अपनी समस्या का सटीक प्रकार चुनें:**",
         "social_prompt": "📱 **सोशल मीडिया हैक / फर्जी अकाउंट (Impersonation) रिपोर्टिंग:**\n\nनीचे सीधे कंपनी के आधिकारिक लिंक पर क्लिक करके रिपोर्ट करें, या गाइड व सुरक्षा सावधानियां जानने के लिए प्लेटफॉर्म चुनें:",
@@ -63,7 +83,7 @@ CONTENT = {
   1. **तुरंत क्या करें (Immediate Steps):** घबराएं नहीं और सबसे पहले क्या कदम उठाएं।
   2. **कौन से सबूत तैयार रखें:** शिकायत के लिए क्या जरूरी है (जैसे: UTR/ट्रांजैक्शन आईडी, बैंक स्टेटमेंट, कॉल रिकॉर्ड, चैट स्क्रीनशॉट, प्रोफाइल/वेबसाइट URL आदि)।
   3. **शिकायत कैसे दर्ज करें:** वित्तीय धोखाधड़ी के लिए तुरंत **1930** पर कॉल करें और सभी साइबर अपराधों के लिए **cybercrime.gov.in** या नजदीकी साइबर थाना/सेल में रिपोर्ट करें।
-  4. **भविष्य के लिए सुरक्षा सावधानियां (Safety Precautions):** आगे ऐसा न हो इसके लिए 3-4 मुख्य टिप्स (जैसे 2-Step Verification, मजबूत पासवर्ड, अनजान लिंक पर क्लिक न करना)।
+  4. **भविष्य के लिए सुरक्षा सावधानियां (Safety Precautions):** आगे ऐसा न हो इसके लिए 3-4 मुख्य टिप्स।
 - कभी भी OTP, पासवर्ड, PIN या बैंक खाता नंबर न मांगें।
 - जवाब बुलेट पॉइंट्स में और संक्षिप्त रखें।
 """,
@@ -114,6 +134,25 @@ CONTENT = {
         "welcome": "Hello! 🙏 I am the **Cyber Crime Cell, Commissionerate Varanasi** Awareness Assistant.\n\nPlease select your issue from the menu below, or type your question.",
         "menu_btn": "📋 Open Main Menu",
         "lang_btn": "🌐 भाषा बदलें (हिंदी)",
+        "quick_services_title": "### ⚡ Quick Citizen Services",
+        "grm_btn": "🏦 Account Freeze by Other State Police (GRM Notice)",
+        "mrm_btn": "💸 Money Restoration Module (MRM) — Refund Update",
+        "mrm_caption": "Search with your 14-digit NCRP Acknowledgement No. to raise or check your frozen money refund request.",
+        "grm_notice": """
+### 🏦 Important Notice Regarding GRM (Grievance Redressal Mechanism)
+
+If your bank account has been frozen (**Freeze/LIEN**) by the **police or cyber police station of any other state or district**, **Cyber Crime Cell, Varanasi does not issue an NOC.**
+
+**What to do in this situation?**
+* ✔️ Visit your bank's **Home Branch** and submit your application through the **GRM (Grievance Redressal Mechanism)**.
+* ✔️ The GRM application filed by the bank is **automatically forwarded** to the concerned police unit or state that placed the freeze/lien on your account.
+* ✔️ The concerned Investigating Officer / Cyber Police Station will examine your application and take necessary action as per rules.
+
+**Please Note:**
+* Cyber Crime Cell, Varanasi is not authorized to issue an NOC for bank accounts frozen by any other state.
+
+*Issued in Public Interest — Cyber Crime Cell, Commissionerate Varanasi, Uttar Pradesh Police*
+""",
         "main_prompt": "👇 **What type of complaint is this? Please select an option below:**",
         "sub_prompt": "👇 **Please select the exact issue:**",
         "social_prompt": "📱 **Hacked / Impersonated Social Media Reporting:**\n\nClick the direct official link below to report to the company, or select a platform for step-by-step guidance & safety precautions:",
@@ -138,7 +177,7 @@ You are a polite and clear 'Cyber Safety Awareness Assistant' representing Cyber
   1. **Immediate Steps:** What to do right away without panicking.
   2. **Evidence to Keep Ready:** What is needed for a complaint (e.g., UTR/Transaction ID, bank statement, call logs, chat screenshots, profile/website URL, etc.).
   3. **How to Report:** For financial fraud, immediately call **1930**, and for all cyber crimes, file a complaint on **cybercrime.gov.in** or visit the nearest Cyber Police Station/Cell.
-  4. **Safety Precautions:** 3-4 practical tips to stay safe in the future (e.g., Two-Factor Authentication, strong passwords, avoiding unknown links).
+  4. **Safety Precautions:** 3-4 practical tips to stay safe in the future.
 - Never ask for OTPs, passwords, PINs, or bank account numbers.
 - Keep answers concise and in bullet points.
 """,
@@ -237,6 +276,20 @@ if b2.button(ui["lang_btn"], use_container_width=True):
     st.session_state.lang = None
     st.rerun()
 
+# --- 5B. Main Page Quick Services: GRM (Account Freeze) & MRM (Money Restoration) ---
+with st.container(border=True):
+    st.markdown(ui["quick_services_title"])
+    q1, q2 = st.columns(2)
+    with q1:
+        if st.button(ui["grm_btn"], use_container_width=True):
+            st.session_state.menu_step = "idle"
+            st.session_state.messages.append({"role": "user", "content": ui["grm_btn"]})
+            st.session_state.messages.append({"role": "assistant", "content": ui["grm_notice"]})
+            st.rerun()
+    with q2:
+        st.link_button(ui["mrm_btn"], MRM_LINK, use_container_width=True, type="primary")
+    st.caption(ui["mrm_caption"])
+
 def ask_bot(user_text, prefix_markdown=""):
     st.session_state.messages.append({"role": "user", "content": user_text})
     try:
@@ -296,7 +349,6 @@ elif st.session_state.menu_step == "social_media":
         report_link = SOCIAL_MEDIA_LINKS[platform]
         col1, col2 = st.columns(2)
 
-        # Left column: AI Guide & Precautions button
         if col1.button(guide_label, use_container_width=True, key=f"sm_{lang}_{k}"):
             st.session_state.menu_step = "idle"
             if lang == "hi":
@@ -331,7 +383,6 @@ elif st.session_state.menu_step == "social_media":
             ask_bot(prompt_text, prefix_markdown=link_box)
             st.rerun()
 
-        # Right column: Direct clickable reporting link button
         if report_link and link_label:
             col2.link_button(link_label, report_link, use_container_width=True, type="primary")
 
