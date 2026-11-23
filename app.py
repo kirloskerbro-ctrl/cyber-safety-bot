@@ -20,7 +20,7 @@ with col_logo:
 
 with col_title:
     st.markdown("## Cyber Crime Cell, Commissionerate Varanasi")
-    st.caption("साइबर सुरक्षा जागरूकता सहायक | Cyber Safety Awareness Bot")
+    st.caption("आत्रेय | Cyber Safety Awareness Bot")
 
 st.divider()
 
