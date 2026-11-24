@@ -11,39 +11,124 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- 1. UP Police Logo Watermark Background ---
-def set_watermark_background(image_file):
-    if os.path.exists(image_file):
-        with open(image_file, "rb") as f:
-            encoded = base64.b64encode(f.read()).decode()
-        st.markdown(
-            f"""
-            <style>
-            [data-testid="stAppViewContainer"]::before {{
+# --- 1. UP Police Logo Watermark Background + Dark Bold Button Styling ---
+def apply_custom_styling():
+    # Automatically find the UP Police logo file in GitHub repo
+    possible_logos = [
+        "up_police_logo.jpeg",
+        "up_police_logo.jpg",
+        "up_police_logo.png",
+        "Uttar Pradesh Police logo.jpeg",
+        "Uttar Pradesh Police logo.jpg",
+        "Uttar Pradesh Police logo.png"
+    ]
+    watermark_css = ""
+    for fname in possible_logos:
+        if os.path.exists(fname):
+            ext = fname.split(".")[-1].lower()
+            mime = "image/png" if ext == "png" else "image/jpeg"
+            with open(fname, "rb") as f:
+                encoded = base64.b64encode(f.read()).decode()
+            watermark_css = f"""
+            .stApp::before {{
                 content: "";
                 position: fixed;
-                top: 0;
-                left: 0;
-                width: 100vw;
-                height: 100vh;
-                background-image: url("data:image/jpeg;base64,{encoded}");
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 480px;
+                height: 480px;
+                background-image: url("data:{mime};base64,{encoded}");
                 background-repeat: no-repeat;
                 background-position: center center;
-                background-size: 420px;
-                opacity: 0.08;
+                background-size: contain;
+                opacity: 0.14;
                 pointer-events: none;
                 z-index: 0;
             }}
-            [data-testid="stAppViewContainer"] > .main {{
-                position: relative;
-                z-index: 1;
-            }}
-            </style>
-            """,
-            unsafe_allow_html=True
-        )
+            """
+            break
 
-set_watermark_background("up_police_logo.jpeg")
+    st.markdown(
+        f"""
+        <style>
+        /* Transparent main containers so watermark shows clearly */
+        .stApp {{
+            background-color: #f8f9fc;
+        }}
+        [data-testid="stAppViewContainer"], [data-testid="stHeader"] {{
+            background: transparent !important;
+        }}
+        .block-container {{
+            position: relative;
+            z-index: 1;
+        }}
+        {watermark_css}
+
+        /* Dark Navy Bold Buttons (All Standard Buttons) */
+        div.stButton > button {{
+            background-color: #0F2C59 !important;
+            color: #FFFFFF !important;
+            font-weight: 700 !important;
+            font-size: 16px !important;
+            padding: 12px 16px !important;
+            border-radius: 8px !important;
+            border: 2px solid #0A1D3D !important;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.18) !important;
+            transition: all 0.2s ease-in-out !important;
+        }}
+        div.stButton > button:hover {{
+            background-color: #1A4380 !important;
+            border-color: #D4AF37 !important;
+            transform: translateY(-1px);
+        }}
+
+        /* Active / Primary Buttons (Police Crimson Red) */
+        div.stButton > button[kind="primary"] {{
+            background-color: #B71C1C !important;
+            color: #FFFFFF !important;
+            border: 2px solid #7F0000 !important;
+            font-weight: 800 !important;
+            font-size: 16px !important;
+        }}
+        div.stButton > button[kind="primary"]:hover {{
+            background-color: #D32F2F !important;
+            border-color: #FFD700 !important;
+        }}
+
+        /* Dark Bold Link Buttons (MRM, Facebook, WhatsApp, etc.) */
+        a[data-testid="stBaseLinkButton-primary"], a[data-testid="stBaseLinkButton-secondary"] {{
+            background-color: #B71C1C !important;
+            color: #FFFFFF !important;
+            font-weight: 700 !important;
+            font-size: 15px !important;
+            padding: 10px 14px !important;
+            border-radius: 8px !important;
+            border: 2px solid #7F0000 !important;
+            text-decoration: none !important;
+        }}
+        a[data-testid="stBaseLinkButton-secondary"] {{
+            background-color: #0F2C59 !important;
+            border-color: #0A1D3D !important;
+        }}
+
+        /* Semi-transparent crisp cards for expanders & chat messages */
+        div[data-testid="stExpander"] {{
+            background-color: rgba(255, 255, 255, 0.90) !important;
+            border-radius: 8px !important;
+            border: 1px solid #cbd5e1 !important;
+        }}
+        div[data-testid="stChatMessage"] {{
+            background-color: rgba(255, 255, 255, 0.90) !important;
+            border-radius: 10px !important;
+            padding: 10px !important;
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+apply_custom_styling()
 
 # --- 2. Header with Cyber Crime Cell Logo ---
 col_logo, col_title = st.columns([1, 4])
@@ -55,7 +140,7 @@ with col_logo:
 
 with col_title:
     st.markdown("## Cyber Crime Cell, Commissionerate Varanasi")
-    st.caption("साइबर सुरक्षा जागरूकता सहायक | Cyber Safety Awareness Bot")
+    st.caption("आत्रेय Cyber Saathi | Quick cybercrime help, complaint guidance, and online safety awareness. Bot")
 
 st.divider()
 
@@ -160,7 +245,9 @@ CONTENT = {
         "welcome": "नमस्ते! 🙏 मैं **साइबर क्राइम सेल, कमिश्नरेट वाराणसी** का जागरूकता सहायक हूँ। अपनी समस्या चुनें या नीचे अपना सवाल लिखें।",
         "lang_btn": "🌐 Change Language (English)",
         "reset_btn": "🔄 मुख्य मेन्यू रीसेट करें",
-        "tabs": ["📝 1. शिकायत सेक्शन", "⚡ 2. त्वरित सेवाएं", "📚 3. साइबर जागरूकता"],
+        "sec_complaint": "📝 1. शिकायत सेक्शन",
+        "sec_services": "⚡ 2. त्वरित सेवाएं",
+        "sec_awareness": "📚 3. साइबर जागरूकता",
         "grm_btn": "🏦 अन्य राज्य पुलिस द्वारा खाता फ्रीज़ (GRM सूचना)",
         "mrm_btn": "💸 मनी रिस्टोरेशन मॉड्यूल (MRM) — रिफंड अपडेट",
         "mrm_caption": "अपना 14 अंकों का NCRP Acknowledgement No. डालकर फ्रीज़ राशि की वापसी (Refund) का अनुरोध/अपडेट देखें।",
@@ -264,7 +351,9 @@ CONTENT = {
         "welcome": "Hello! 🙏 I am the **Cyber Crime Cell, Commissionerate Varanasi** Awareness Assistant. Select your issue or type your question below.",
         "lang_btn": "🌐 भाषा बदलें (हिंदी)",
         "reset_btn": "🔄 Reset Main Menu",
-        "tabs": ["📝 1. Complaint Section", "⚡ 2. Quick Services", "📚 3. Awareness Section"],
+        "sec_complaint": "📝 1. Complaint Section",
+        "sec_services": "⚡ 2. Quick Services",
+        "sec_awareness": "📚 3. Awareness Section",
         "grm_btn": "🏦 Account Freeze by Other State Police (GRM Notice)",
         "mrm_btn": "💸 Money Restoration Module (MRM) — Refund Update",
         "mrm_caption": "Search with your 14-digit NCRP Acknowledgement No. to raise or check your frozen money refund request.",
@@ -370,6 +459,8 @@ if "lang" not in st.session_state:
     st.session_state.lang = None
 if "client" not in st.session_state:
     st.session_state.client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
+if "active_section" not in st.session_state:
+    st.session_state.active_section = "complaint"  # complaint, services, awareness
 if "menu_step" not in st.session_state:
     st.session_state.menu_step = "main"
 if "selected_category" not in st.session_state:
@@ -379,6 +470,7 @@ if "show_grm" not in st.session_state:
 
 def start_session(lang_code):
     st.session_state.lang = lang_code
+    st.session_state.active_section = "complaint"
     st.session_state.menu_step = "main"
     st.session_state.selected_category = None
     st.session_state.show_grm = False
@@ -404,19 +496,50 @@ if st.session_state.lang is None:
             st.rerun()
     st.stop()
 
-# --- 7. Main Page (3 Sections) ---
+# --- 7. Main Page ---
 lang = st.session_state.lang
 ui = CONTENT[lang]
 
-# Top bar: Reset & Language switch
+# Top bar: Reset & Language switch (Dark Bold Buttons)
 b1, b2 = st.columns(2)
 if b1.button(ui["reset_btn"], use_container_width=True):
+    st.session_state.active_section = "complaint"
     st.session_state.menu_step = "main"
     st.session_state.selected_category = None
     st.rerun()
 if b2.button(ui["lang_btn"], use_container_width=True):
     st.session_state.lang = None
     st.rerun()
+
+st.markdown("")
+
+# 3 Big Bold Section Buttons (Active section is highlighted in Police Red)
+s_col1, s_col2, s_col3 = st.columns(3)
+if s_col1.button(
+    ui["sec_complaint"],
+    use_container_width=True,
+    type="primary" if st.session_state.active_section == "complaint" else "secondary"
+):
+    st.session_state.active_section = "complaint"
+    st.rerun()
+
+if s_col2.button(
+    ui["sec_services"],
+    use_container_width=True,
+    type="primary" if st.session_state.active_section == "services" else "secondary"
+):
+    st.session_state.active_section = "services"
+    st.rerun()
+
+if s_col3.button(
+    ui["sec_awareness"],
+    use_container_width=True,
+    type="primary" if st.session_state.active_section == "awareness" else "secondary"
+):
+    st.session_state.active_section = "awareness"
+    st.rerun()
+
+st.divider()
 
 def ask_bot(user_text, prefix_markdown=""):
     st.session_state.messages.append({"role": "user", "content": user_text})
@@ -433,11 +556,8 @@ def ask_bot(user_text, prefix_markdown=""):
     final_reply = f"{prefix_markdown}{bot_reply}" if prefix_markdown else bot_reply
     st.session_state.messages.append({"role": "assistant", "content": final_reply})
 
-# Create the 3 Main Sections
-tab_complaint, tab_services, tab_awareness = st.tabs(ui["tabs"])
-
 # ==================== SECTION 1: COMPLAINT SECTION ====================
-with tab_complaint:
+if st.session_state.active_section == "complaint":
     if st.session_state.menu_step == "main":
         st.info(ui["main_prompt"])
         cols = st.columns(2)
@@ -498,7 +618,7 @@ with tab_complaint:
             st.markdown(msg["content"])
 
 # ==================== SECTION 2: QUICK SERVICES ====================
-with tab_services:
+elif st.session_state.active_section == "services":
     with st.container(border=True):
         if st.button(ui["grm_btn"], use_container_width=True):
             st.session_state.show_grm = not st.session_state.show_grm
@@ -519,7 +639,7 @@ with tab_services:
         st.markdown(ui["varanasi_contacts"])
 
 # ==================== SECTION 3: AWARENESS SECTION ====================
-with tab_awareness:
+elif st.session_state.active_section == "awareness":
     st.markdown(ui["awareness_intro"])
     st.markdown(ui["scams_header"])
     for scam_title, scam_body in AWARENESS_SCAMS[lang]:
@@ -540,6 +660,7 @@ st.warning(ui["warning"])
 if prompt := st.chat_input(ui["chat_placeholder"]):
     clean_prompt = prompt.strip().lower()
     greetings = ["hi", "hello", "hey", "hii", "नमस्ते", "नमस्कार", "menu", "मेन्यू", "help", "मदद"]
+    st.session_state.active_section = "complaint"
     if clean_prompt in greetings:
         st.session_state.messages.append({"role": "user", "content": prompt})
         st.session_state.messages.append({"role": "assistant", "content": ui["hi_reply"]})
