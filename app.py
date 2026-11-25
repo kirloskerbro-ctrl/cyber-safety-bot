@@ -1,5 +1,7 @@
 import os
 import base64
+import smtplib
+from email.message import EmailMessage
 import streamlit as st
 from google import genai
 from google.genai import types
@@ -64,6 +66,19 @@ def apply_custom_styling():
         }}
         {watermark_css}
 
+        /* Welcome Banner Box at Top */
+        .welcome-banner {{
+            background-color: rgba(15, 44, 89, 0.95);
+            color: #FFFFFF;
+            padding: 16px 20px;
+            border-radius: 10px;
+            border-left: 6px solid #D4AF37;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+        }}
+
         /* Dark Navy Bold Buttons (Standard & Secondary Link Buttons) */
         div.stButton > button,
         a[data-testid="stBaseLinkButton-secondary"] {{
@@ -88,7 +103,8 @@ def apply_custom_styling():
 
         /* Active / Primary Buttons (Police Crimson Red) */
         div.stButton > button[kind="primary"],
-        a[data-testid="stBaseLinkButton-primary"] {{
+        a[data-testid="stBaseLinkButton-primary"],
+        div[data-testid="stFormSubmitButton"] > button {{
             background-color: #B71C1C !important;
             color: #FFFFFF !important;
             border: 2px solid #7F0000 !important;
@@ -100,7 +116,8 @@ def apply_custom_styling():
             text-decoration: none !important;
         }}
         div.stButton > button[kind="primary"]:hover,
-        a[data-testid="stBaseLinkButton-primary"]:hover {{
+        a[data-testid="stBaseLinkButton-primary"]:hover,
+        div[data-testid="stFormSubmitButton"] > button:hover {{
             background-color: #D32F2F !important;
             border-color: #FFD700 !important;
             color: #FFFFFF !important;
@@ -108,12 +125,12 @@ def apply_custom_styling():
 
         /* Semi-transparent crisp cards */
         div[data-testid="stExpander"] {{
-            background-color: rgba(255, 255, 255, 0.90) !important;
+            background-color: rgba(255, 255, 255, 0.92) !important;
             border-radius: 8px !important;
             border: 1px solid #cbd5e1 !important;
         }}
         div[data-testid="stChatMessage"] {{
-            background-color: rgba(255, 255, 255, 0.90) !important;
+            background-color: rgba(255, 255, 255, 0.92) !important;
             border-radius: 10px !important;
             padding: 10px !important;
         }}
@@ -123,6 +140,36 @@ def apply_custom_styling():
     )
 
 apply_custom_styling()
+
+# --- Helper: Send Citizen Callback Request to Officer's Email ---
+def send_callback_email(name, phone, problem_text):
+    sender = st.secrets.get("SENDER_EMAIL", "")
+    app_password = st.secrets.get("SENDER_APP_PASSWORD", "")
+    receiver = st.secrets.get("RECEIVER_EMAIL", "")
+
+    if not (sender and app_password and receiver):
+        return False, "Email settings not configured in Streamlit Secrets yet."
+
+    msg = EmailMessage()
+    msg["Subject"] = f"🚨 Cyber Saathi Callback Request: {name} ({phone})"
+    msg["From"] = sender
+    msg["To"] = receiver
+    msg.set_content(
+        f"New Citizen Query from Cyber Saathi 'आत्रेय' Bot\n"
+        f"--------------------------------------------------\n"
+        f"Citizen Name   : {name}\n"
+        f"Mobile Number  : {phone}\n"
+        f"--------------------------------------------------\n"
+        f"Problem Details:\n{problem_text}\n"
+    )
+
+    try:
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
+            smtp.login(sender, app_password)
+            smtp.send_message(msg)
+        return True, "Sent"
+    except Exception as e:
+        return False, str(e)
 
 # --- 2. Header with Cyber Crime Cell Logo ---
 col_logo, col_title = st.columns([1, 4])
@@ -134,7 +181,7 @@ with col_logo:
 
 with col_title:
     st.markdown("## Cyber Crime Cell, Commissionerate Varanasi")
-    st.caption("Cyber Saathi आत्रेय| Quick cybercrime help, complaint guidance, and online safety awareness. Bot")
+    st.caption("Cyber Saathi 'आत्रेय' | Quick cybercrime help, complaint guidance, and online safety awareness")
 
 st.divider()
 
@@ -238,8 +285,8 @@ AWARENESS_GUIDES = {
 # --- 4. Main UI Content (Hindi & English) ---
 CONTENT = {
     "hi": {
+        "top_welcome": 'नमस्ते! 🙏 मैं साइबर क्राइम सेल, कमिश्नरेट वाराणसी का Cyber Saathi "आत्रेय" हूँ। नीचे दिए गए विकल्पों में से अपनी समस्या चुनें या नीचे अपना सवाल लिखें।',
         "warning": "⚠️ यह एक AI जागरूकता सहायक है, आधिकारिक शिकायत पोर्टल नहीं। यहाँ कभी भी OTP, पासवर्ड या बैंक खाता नंबर न लिखें। वित्तीय धोखाधड़ी होने पर तुरंत **1930** पर कॉल करें या **cybercrime.gov.in** पर शिकायत दर्ज करें।",
-        "welcome": "नमस्ते! 🙏 मैं **साइबर क्राइम सेल, कमिश्नरेट वाराणसी** का जागरूकता सहायक हूँ। अपनी समस्या चुनें या नीचे अपना सवाल लिखें।",
         "lang_btn": "🌐 Change Language (English)",
         "reset_btn": "🔄 मुख्य मेन्यू रीसेट करें",
         "sec_complaint": "📝 1. शिकायत सेक्शन",
@@ -248,6 +295,13 @@ CONTENT = {
         "btn_status": "📋 शिकायत स्थिति जांचें",
         "btn_report_suspect": "🚨 संदिग्ध की रिपोर्ट करें",
         "btn_search_suspect": "🔎 संदिग्ध खोजें (Search)",
+        "callback_title": "📞 समस्या ऊपर नहीं है? सीधे साइबर सेल को संदेश भेजें (कॉल बैक अनुरोध)",
+        "callback_name": "आपका नाम *",
+        "callback_phone": "आपका 10 अंकों का मोबाइल नंबर *",
+        "callback_problem": "अपनी समस्या विस्तार से लिखें (OTP या पासवर्ड न लिखें) *",
+        "callback_submit": "📨 साइबर क्राइम सेल को भेजें (कॉल बैक के लिए)",
+        "callback_success": "✅ आपका संदेश साइबर क्राइम सेल, वाराणसी को भेज दिया गया है। हमारी टीम जल्द ही आपको कॉल करके समस्या का समाधान करेगी।",
+        "callback_err_fields": "⚠️ कृपया अपना नाम, सही 10 अंकों का मोबाइल नंबर और समस्या लिखें।",
         "grm_btn": "🏦 अन्य राज्य पुलिस द्वारा खाता फ्रीज़ (GRM सूचना)",
         "mrm_btn": "💸 मनी रिस्टोरेशन मॉड्यूल (MRM) — रिफंड अपडेट",
         "mrm_caption": "अपना 14 अंकों का NCRP Acknowledgement No. डालकर फ्रीज़ राशि की वापसी (Refund) का अनुरोध/अपडेट देखें।",
@@ -295,7 +349,7 @@ CONTENT = {
             ("🌐 अन्य सोशल मीडिया (X, YouTube आदि)", None, "Other")
         ],
         "rules": """
-आप साइबर क्राइम सेल, कमिश्नरेट वाराणसी की ओर से एक विनम्र और स्पष्ट 'साइबर सुरक्षा जागरूकता सहायक' हैं।
+आप साइबर क्राइम सेल, कमिश्नरेट वाराणसी के Cyber Saathi 'आत्रेय' हैं।
 - हमेशा सरल, शुद्ध और समझने में आसान हिंदी भाषा में जवाब दें।
 - जब कोई यूज़र किसी साइबर अपराध की श्रेणी चुने, तो उसे साफ-साफ बिंदुओं में समझाएं:
   1. **तुरंत क्या करें (Immediate Steps)**
@@ -347,8 +401,8 @@ CONTENT = {
         }
     },
     "en": {
+        "top_welcome": 'Namaste! 🙏 I am Cyber Saathi "Atreya" of Cyber Crime Cell, Commissionerate Varanasi. Please select your problem from the options below or type your question below.',
         "warning": "⚠️ This is an AI awareness assistant, not an official complaint portal. Never share OTPs, passwords, or bank details here. For financial fraud, immediately call **1930** or report at **cybercrime.gov.in**.",
-        "welcome": "Hello! 🙏 I am the **Cyber Crime Cell, Commissionerate Varanasi** Awareness Assistant. Select your issue or type your question below.",
         "lang_btn": "🌐 भाषा बदलें (हिंदी)",
         "reset_btn": "🔄 Reset Main Menu",
         "sec_complaint": "📝 1. Complaint Section",
@@ -357,6 +411,13 @@ CONTENT = {
         "btn_status": "📋 Check Complaint Status",
         "btn_report_suspect": "🚨 Report Suspect",
         "btn_search_suspect": "🔎 Suspect Search",
+        "callback_title": "📞 Issue Not Listed Above? Send Your Problem to Cyber Cell (Request Call Back)",
+        "callback_name": "Your Full Name *",
+        "callback_phone": "Your 10-Digit Mobile Number *",
+        "callback_problem": "Describe Your Problem (Do NOT enter OTP or Password) *",
+        "callback_submit": "📨 Send to Cyber Crime Cell (Request Call Back)",
+        "callback_success": "✅ Your message has been sent to Cyber Crime Cell, Varanasi. Our team will review it and call you back shortly.",
+        "callback_err_fields": "⚠️ Please enter your name, a valid 10-digit mobile number, and your problem.",
         "grm_btn": "🏦 Account Freeze by Other State Police (GRM Notice)",
         "mrm_btn": "💸 Money Restoration Module (MRM) — Refund Update",
         "mrm_caption": "Search with your 14-digit NCRP Acknowledgement No. to raise or check your frozen money refund request.",
@@ -404,7 +465,7 @@ If your bank account has been frozen (**Freeze/LIEN**) by the **police or cyber 
             ("🌐 Other Social Media (X, YouTube, etc.)", None, "Other")
         ],
         "rules": """
-You are a polite and clear 'Cyber Safety Awareness Assistant' representing Cyber Crime Cell, Commissionerate Varanasi.
+You are Cyber Saathi 'Atreya' representing Cyber Crime Cell, Commissionerate Varanasi.
 - Always reply in simple, clear English.
 - When a user selects a cyber crime category, explain clearly in these points:
   1. **Immediate Steps**
@@ -481,9 +542,7 @@ def start_session(lang_code):
         model="gemini-3.5-flash-lite",
         config=types.GenerateContentConfig(system_instruction=CONTENT[lang_code]["rules"])
     )
-    st.session_state.messages = [
-        {"role": "assistant", "content": CONTENT[lang_code]["welcome"]}
-    ]
+    st.session_state.messages = []
 
 # --- 6. Language Selection Screen ---
 if st.session_state.lang is None:
@@ -502,6 +561,9 @@ if st.session_state.lang is None:
 # --- 7. Main Page ---
 lang = st.session_state.lang
 ui = CONTENT[lang]
+
+# TOP WELCOME BANNER (First thing the citizen reads!)
+st.markdown(f'<div class="welcome-banner">{ui["top_welcome"]}</div>', unsafe_allow_html=True)
 
 # Top bar: Reset & Language switch
 b1, b2 = st.columns(2)
@@ -540,7 +602,7 @@ if s_col3.button(
     st.session_state.active_section = "awareness"
     st.rerun()
 
-# Row 2: 3 Direct NCRP Action Buttons (Dark Bold Style)
+# Row 2: 3 Direct NCRP Action Buttons
 p_col1, p_col2, p_col3 = st.columns(3)
 p_col1.link_button(ui["btn_status"], CHECK_STATUS_LINK, use_container_width=True, type="secondary")
 p_col2.link_button(ui["btn_report_suspect"], REPORT_SUSPECT_LINK, use_container_width=True, type="secondary")
@@ -618,10 +680,31 @@ if st.session_state.active_section == "complaint":
             st.session_state.menu_step = "sub"
             st.rerun()
 
-    st.divider()
-    for msg in st.session_state.messages:
-        with st.chat_message(msg["role"]):
-            st.markdown(msg["content"])
+    # Chat history (only shows once the user clicks an option or asks a question)
+    if st.session_state.messages:
+        st.divider()
+        for msg in st.session_state.messages:
+            with st.chat_message(msg["role"]):
+                st.markdown(msg["content"])
+
+    # Direct Call-Back Form for Other Problems (Emails the Cyber Crime Cell directly)
+    st.markdown("")
+    with st.expander(ui["callback_title"], expanded=False):
+        with st.form("callback_form", clear_on_submit=True):
+            c_name = st.text_input(ui["callback_name"])
+            c_phone = st.text_input(ui["callback_phone"], max_chars=10)
+            c_problem = st.text_area(ui["callback_problem"])
+            submitted = st.form_submit_button(ui["callback_submit"], use_container_width=True)
+
+            if submitted:
+                if not c_name.strip() or len(c_phone.strip()) != 10 or not c_phone.strip().isdigit() or not c_problem.strip():
+                    st.error(ui["callback_err_fields"])
+                else:
+                    ok, info = send_callback_email(c_name.strip(), c_phone.strip(), c_problem.strip())
+                    if ok:
+                        st.success(ui["callback_success"])
+                    else:
+                        st.error(f"Could not send right now: {info}")
 
 # ==================== SECTION 2: QUICK SERVICES ====================
 elif st.session_state.active_section == "services":
