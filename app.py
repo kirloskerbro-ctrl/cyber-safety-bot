@@ -524,7 +524,7 @@ if "lang" not in st.session_state:
 if "client" not in st.session_state:
     st.session_state.client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
 if "active_section" not in st.session_state:
-    st.session_state.active_section = "complaint"
+    st.session_state.active_section = None
 if "menu_step" not in st.session_state:
     st.session_state.menu_step = "main"
 if "selected_category" not in st.session_state:
@@ -534,7 +534,7 @@ if "show_grm" not in st.session_state:
 
 def start_session(lang_code):
     st.session_state.lang = lang_code
-    st.session_state.active_section = "complaint"
+    st.session_state.active_section = None
     st.session_state.menu_step = "main"
     st.session_state.selected_category = None
     st.session_state.show_grm = False
@@ -568,7 +568,7 @@ st.markdown(f'<div class="welcome-banner">{ui["top_welcome"]}</div>', unsafe_all
 # Top bar: Reset & Language switch
 b1, b2 = st.columns(2)
 if b1.button(ui["reset_btn"], use_container_width=True):
-    st.session_state.active_section = "complaint"
+    st.session_state.active_section = None
     st.session_state.menu_step = "main"
     st.session_state.selected_category = None
     st.rerun()
