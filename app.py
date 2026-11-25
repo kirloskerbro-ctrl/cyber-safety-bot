@@ -13,8 +13,8 @@ st.set_page_config(
 
 # --- 1. UP Police Logo Watermark Background + Dark Bold Button Styling ---
 def apply_custom_styling():
-    # Automatically find the UP Police logo file in GitHub repo
     possible_logos = [
+        "up_ police_ logo.jpeg",
         "up_police_logo.jpeg",
         "up_police_logo.jpg",
         "up_police_logo.png",
@@ -52,7 +52,6 @@ def apply_custom_styling():
     st.markdown(
         f"""
         <style>
-        /* Transparent main containers so watermark shows clearly */
         .stApp {{
             background-color: #f8f9fc;
         }}
@@ -65,54 +64,49 @@ def apply_custom_styling():
         }}
         {watermark_css}
 
-        /* Dark Navy Bold Buttons (All Standard Buttons) */
-        div.stButton > button {{
+        /* Dark Navy Bold Buttons (Standard & Secondary Link Buttons) */
+        div.stButton > button,
+        a[data-testid="stBaseLinkButton-secondary"] {{
             background-color: #0F2C59 !important;
             color: #FFFFFF !important;
             font-weight: 700 !important;
-            font-size: 16px !important;
-            padding: 12px 16px !important;
+            font-size: 15px !important;
+            padding: 12px 14px !important;
             border-radius: 8px !important;
             border: 2px solid #0A1D3D !important;
             box-shadow: 0 3px 6px rgba(0,0,0,0.18) !important;
+            text-decoration: none !important;
             transition: all 0.2s ease-in-out !important;
         }}
-        div.stButton > button:hover {{
+        div.stButton > button:hover,
+        a[data-testid="stBaseLinkButton-secondary"]:hover {{
             background-color: #1A4380 !important;
             border-color: #D4AF37 !important;
+            color: #FFFFFF !important;
             transform: translateY(-1px);
         }}
 
         /* Active / Primary Buttons (Police Crimson Red) */
-        div.stButton > button[kind="primary"] {{
+        div.stButton > button[kind="primary"],
+        a[data-testid="stBaseLinkButton-primary"] {{
             background-color: #B71C1C !important;
             color: #FFFFFF !important;
             border: 2px solid #7F0000 !important;
             font-weight: 800 !important;
-            font-size: 16px !important;
-        }}
-        div.stButton > button[kind="primary"]:hover {{
-            background-color: #D32F2F !important;
-            border-color: #FFD700 !important;
-        }}
-
-        /* Dark Bold Link Buttons (MRM, Facebook, WhatsApp, etc.) */
-        a[data-testid="stBaseLinkButton-primary"], a[data-testid="stBaseLinkButton-secondary"] {{
-            background-color: #B71C1C !important;
-            color: #FFFFFF !important;
-            font-weight: 700 !important;
             font-size: 15px !important;
-            padding: 10px 14px !important;
+            padding: 12px 14px !important;
             border-radius: 8px !important;
-            border: 2px solid #7F0000 !important;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.18) !important;
             text-decoration: none !important;
         }}
-        a[data-testid="stBaseLinkButton-secondary"] {{
-            background-color: #0F2C59 !important;
-            border-color: #0A1D3D !important;
+        div.stButton > button[kind="primary"]:hover,
+        a[data-testid="stBaseLinkButton-primary"]:hover {{
+            background-color: #D32F2F !important;
+            border-color: #FFD700 !important;
+            color: #FFFFFF !important;
         }}
 
-        /* Semi-transparent crisp cards for expanders & chat messages */
+        /* Semi-transparent crisp cards */
         div[data-testid="stExpander"] {{
             background-color: rgba(255, 255, 255, 0.90) !important;
             border-radius: 8px !important;
@@ -145,6 +139,9 @@ with col_title:
 st.divider()
 
 # Official Links
+CHECK_STATUS_LINK = "https://www.cybercrime.gov.in/check-status"
+REPORT_SUSPECT_LINK = "https://www.cybercrime.gov.in/cyber_suspect"
+SUSPECT_SEARCH_LINK = "https://www.cybercrime.gov.in/suspect-search"
 MRM_LINK = "https://mrm-ncrp.mha.gov.in/raise-request"
 SANCHAR_SAATHI_LINK = "https://www.sancharsaathi.gov.in/"
 NCRP_LINK = "https://www.cybercrime.gov.in/"
@@ -248,6 +245,9 @@ CONTENT = {
         "sec_complaint": "📝 1. शिकायत सेक्शन",
         "sec_services": "⚡ 2. त्वरित सेवाएं",
         "sec_awareness": "📚 3. साइबर जागरूकता",
+        "btn_status": "📋 शिकायत स्थिति जांचें",
+        "btn_report_suspect": "🚨 संदिग्ध की रिपोर्ट करें",
+        "btn_search_suspect": "🔎 संदिग्ध खोजें (Search)",
         "grm_btn": "🏦 अन्य राज्य पुलिस द्वारा खाता फ्रीज़ (GRM सूचना)",
         "mrm_btn": "💸 मनी रिस्टोरेशन मॉड्यूल (MRM) — रिफंड अपडेट",
         "mrm_caption": "अपना 14 अंकों का NCRP Acknowledgement No. डालकर फ्रीज़ राशि की वापसी (Refund) का अनुरोध/अपडेट देखें।",
@@ -354,6 +354,9 @@ CONTENT = {
         "sec_complaint": "📝 1. Complaint Section",
         "sec_services": "⚡ 2. Quick Services",
         "sec_awareness": "📚 3. Awareness Section",
+        "btn_status": "📋 Check Complaint Status",
+        "btn_report_suspect": "🚨 Report Suspect",
+        "btn_search_suspect": "🔎 Suspect Search",
         "grm_btn": "🏦 Account Freeze by Other State Police (GRM Notice)",
         "mrm_btn": "💸 Money Restoration Module (MRM) — Refund Update",
         "mrm_caption": "Search with your 14-digit NCRP Acknowledgement No. to raise or check your frozen money refund request.",
@@ -460,7 +463,7 @@ if "lang" not in st.session_state:
 if "client" not in st.session_state:
     st.session_state.client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
 if "active_section" not in st.session_state:
-    st.session_state.active_section = "complaint"  # complaint, services, awareness
+    st.session_state.active_section = "complaint"
 if "menu_step" not in st.session_state:
     st.session_state.menu_step = "main"
 if "selected_category" not in st.session_state:
@@ -500,7 +503,7 @@ if st.session_state.lang is None:
 lang = st.session_state.lang
 ui = CONTENT[lang]
 
-# Top bar: Reset & Language switch (Dark Bold Buttons)
+# Top bar: Reset & Language switch
 b1, b2 = st.columns(2)
 if b1.button(ui["reset_btn"], use_container_width=True):
     st.session_state.active_section = "complaint"
@@ -511,9 +514,7 @@ if b2.button(ui["lang_btn"], use_container_width=True):
     st.session_state.lang = None
     st.rerun()
 
-st.markdown("")
-
-# 3 Big Bold Section Buttons (Active section is highlighted in Police Red)
+# Row 1: 3 Big Bold Section Buttons
 s_col1, s_col2, s_col3 = st.columns(3)
 if s_col1.button(
     ui["sec_complaint"],
@@ -538,6 +539,12 @@ if s_col3.button(
 ):
     st.session_state.active_section = "awareness"
     st.rerun()
+
+# Row 2: 3 Direct NCRP Action Buttons (Dark Bold Style)
+p_col1, p_col2, p_col3 = st.columns(3)
+p_col1.link_button(ui["btn_status"], CHECK_STATUS_LINK, use_container_width=True, type="secondary")
+p_col2.link_button(ui["btn_report_suspect"], REPORT_SUSPECT_LINK, use_container_width=True, type="secondary")
+p_col3.link_button(ui["btn_search_suspect"], SUSPECT_SEARCH_LINK, use_container_width=True, type="secondary")
 
 st.divider()
 
@@ -611,7 +618,6 @@ if st.session_state.active_section == "complaint":
             st.session_state.menu_step = "sub"
             st.rerun()
 
-    # Chat history inside Complaint Section
     st.divider()
     for msg in st.session_state.messages:
         with st.chat_message(msg["role"]):
@@ -632,8 +638,8 @@ elif st.session_state.active_section == "services":
 
         st.divider()
         s1, s2 = st.columns(2)
-        s1.link_button(ui["sanchar_btn"], SANCHAR_SAATHI_LINK, use_container_width=True)
-        s2.link_button(ui["ncrp_btn"], NCRP_LINK, use_container_width=True)
+        s1.link_button(ui["sanchar_btn"], SANCHAR_SAATHI_LINK, use_container_width=True, type="secondary")
+        s2.link_button(ui["ncrp_btn"], NCRP_LINK, use_container_width=True, type="secondary")
 
     with st.container(border=True):
         st.markdown(ui["varanasi_contacts"])
